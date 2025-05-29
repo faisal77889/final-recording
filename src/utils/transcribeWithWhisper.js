@@ -30,7 +30,7 @@ async function transcribeWithWhisper(audioPath, outputDir) {
     
     // Run Whisper transcription with explicit language and format settings
     console.log("Running Whisper transcription...");
-    const whisperCommand = `whisper "${tempAudioPath}" --model base --language en --output_dir "${outputDir}" --output_format srt`;
+    const whisperCommand = `/usr/local/bin/run-whisper "${tempAudioPath}" --model base --language en --output_dir "${outputDir}" --output_format srt`;
     console.log("Whisper command:", whisperCommand);
     
     const { stdout, stderr } = await execPromise(whisperCommand);
