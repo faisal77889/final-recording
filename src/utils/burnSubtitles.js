@@ -81,6 +81,7 @@ const burnSubtitlesIntoVideo = (videoPath, srtPath, outputDir) => {
                const subtitleFilter = `subtitles='${normalizedSrtPath.replace(/:/g, '\\:').replace(/'/g, "\\'")}:force_style=FontName=Arial,FontSize=24,PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,Outline=2,BorderStyle=3'`;
 
 
+
                 const ffmpegArgs = [
                     '-i', normalizedVideoPath,
                     '-vf', subtitleFilter,

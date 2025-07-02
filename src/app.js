@@ -30,15 +30,48 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
-app.use(express.json());
+
+// Increase body size limit for large file uploads (1GB)
+app.use(express.json({ limit: '1gb' }));
+app.use(express.urlencoded({ limit: '1gb', extended: true }));
+
+// Increase timeout for large uploads
+app.use((req, res, next) => {
+  req.setTimeout(300000); // 5 minutes
+  res.setTimeout(300000); // 5 minutes
+  next();
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ 
-        error: "Something broke!", 
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+  console.error('Error:', err);
+  
+  // Handle specific file size errors
+  if (err.code === 'LIMIT_FILE_SIZE' || err.code === 'LIMIT_UNEXPECTED_FILE') {
+    return res.status(413).json({ 
+      error: "File too large", 
+      details: "Maximum file size is 1GB. Please try a smaller file.",
+      maxSize: "1GB"
     });
+  }
+  
+  // Handle multer errors
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ 
+        error: "File too large", 
+        details: "Maximum file size is 1GB. Please try a smaller file.",
+        maxSize: "1GB"
+      });
+    }
+    return res.status(400).json({ error: err.message });
+  }
+  
+  // Handle other errors
+  res.status(500).json({ 
+    error: "Something broke!", 
+    details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+  });
 });
 
 // Mount routers

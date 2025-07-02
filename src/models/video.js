@@ -17,8 +17,7 @@ const videoSchema = new mongoose.Schema({
     default: ""
   },
   videoUrl: {
-    type: String,
-    required: true
+    type: String
   },
   thumbnailUrl: {
     type: String
@@ -35,9 +34,34 @@ const videoSchema = new mongoose.Schema({
     enum: ["processing", "processed", "failed"],
     default: "processing"
   },
+  // Chunk-related fields
+  partNumber: {
+    type: Number,
+    default: 1
+  },
+  totalParts: {
+    type: Number,
+    default: 1
+  },
+  isChunked: {
+    type: Boolean,
+    default: false
+  },
+  chunkId: {
+    type: String,
+    default: null
+  },
+  allChunksProcessed: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  baseTitle: {
+    type: String,
+    default: ''
   }
 });
 
